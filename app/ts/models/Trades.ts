@@ -1,6 +1,7 @@
 import Trade from "./Trade";
+import { Printable } from "./Printable";
 
-export default class Trades {
+export default class Trades implements Printable {
   // private _trades: Array<Trade> = []
   constructor(private _trades: Trade[] = []) {}
 
@@ -10,5 +11,9 @@ export default class Trades {
 
   toArray(): Trade[] {
     return ([] as Trade[]).concat(this._trades);
+  }
+
+  log(): void {
+    console.log(JSON.stringify(this._trades));
   }
 }
