@@ -60,8 +60,12 @@ export default class TradeController {
     }
 
     this._service.getTrades(isOk)
-      .then(trades => {
-        trades.forEach(trade => this._trades.add(trade));
+      .then(importTrades => {
+        const currentTrades = this._trades.toArray();
+
+        importTrades
+          .filter(trade => !currentTrades.some(currentTrade => trade.isEqual(currentTrade)))
+          .forEach(trade => this._trades.add(trade));
         this._tradesView.update(this._trades);
         this._alertView.update("Import completed with success!");
       });

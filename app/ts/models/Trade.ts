@@ -1,6 +1,6 @@
-import { Printable } from './Printable'
+import { Common } from './Common';
 
-export default class Trade implements Printable {
+export default class Trade implements Common<Trade> {
   constructor(
     readonly date: Date,
     readonly quantity: number,
@@ -16,5 +16,13 @@ export default class Trade implements Printable {
       quantity: ${this.quantity}
       value: ${this.value}
     `)
+  }
+
+  isEqual(trade: Trade): boolean {
+    return this.date.getDate() == trade.date.getDate()
+      && this.date.getMonth() == trade.date.getMonth()
+      && this.date.getFullYear() == this.date.getFullYear()
+      && this.quantity == trade.quantity
+      && this.value == trade.value;
   }
 }
