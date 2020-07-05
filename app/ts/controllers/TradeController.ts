@@ -2,11 +2,16 @@ import TradeView from "../views/TradeView";
 import AlertView from "../views/AlertView";
 import Trades from "../models/Trades";
 import Trade from "../models/Trade";
+import { domInject } from "../helpers/decorators/domInject";
 
 export default class TradeController {
-  
+
+  // Lazy loading
+  @domInject('#data')
   private _inputDate: JQuery;
+  @domInject('#quantidade')
   private _inputQuantity: JQuery;
+  @domInject('#valor')
   private _inputValue: JQuery;
 
   private _tradesView = new TradeView('#tradesView');
@@ -16,10 +21,6 @@ export default class TradeController {
   private _trades = new Trades();
 
   constructor() {
-    this._inputDate = $('#data');
-    this._inputQuantity = $('#quantidade');
-    this._inputValue = $('#valor');
-
     this._tradesView.update(this._trades);
   }
 
