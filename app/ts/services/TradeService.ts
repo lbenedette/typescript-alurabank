@@ -9,7 +9,10 @@ export class TradeService {
       .then((dados: PartialTrade[]) =>
         dados.map(dado => new Trade(new Date(), dado.vezes, dado.montante))
       )
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err);
+        throw new Error("Unable to import trades!");
+      });
   }
 }
 

@@ -50,7 +50,7 @@ export default class TradeController {
   }
 
   @throttle(1000)
-  importData() {
+  async importData() {
     const isOk: HandlerFunction = (response: Response) => {
       if (response.ok) {
         return response
@@ -59,16 +59,19 @@ export default class TradeController {
       }
     }
 
-    this._service.getTrades(isOk)
-      .then(importTrades => {
-        const currentTrades = this._trades.toArray();
+    try {
+      const currentTrades = this._trades.toArray();
+      const importTrades = await this._service.getTrades(isOk)
 
-        importTrades
-          .filter(trade => !currentTrades.some(currentTrade => trade.isEqual(currentTrade)))
-          .forEach(trade => this._trades.add(trade));
-        this._tradesView.update(this._trades);
-        this._alertView.update("Import completed with success!");
-      });
+      importTrades
+        .filter(trade => !currentTrades.some(currentTrade => trade.isEqual(currentTrade)))
+        .forEach(trade => this._trades.add(trade));
+
+      this._tradesView.update(this._trades);
+      this._alertView.update("Import completed with success!");
+    } catch (err) {
+      this._alertView.update(err.message);
+    }
   }
 
   private isBusinessDay(date: Date) {
