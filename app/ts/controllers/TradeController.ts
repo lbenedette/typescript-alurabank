@@ -3,6 +3,7 @@ import AlertView from "../views/AlertView";
 import Trades from "../models/Trades";
 import Trade from "../models/Trade";
 import { domInject } from "../helpers/decorators/domInject";
+import PartialTrade from "../models/PartialTrade";
 
 export default class TradeController {
 
@@ -42,6 +43,30 @@ export default class TradeController {
     this._trades.add(trade);
     this._tradesView.update(this._trades);
     this._alertView.update("Trade added with success!");
+  }
+
+  importData() {
+
+    function isOk(response: Response) {
+      if (response.ok) {
+        return response
+      } else {
+        throw new Error(response.statusText);
+      }
+    }
+
+    fetch('http://localhost:8080/dados')
+      .then(response => isOk(response))
+      .then(response => response.json())
+      .then((dados: PartialTrade[]) => {
+        dados
+          .map(dado => new Trade(new Date(), dado.vezes, dado.montante))
+          .forEach(trade => this._trades.add(trade))
+
+        this._tradesView.update(this._trades);
+        this._alertView.update("Import completed with success!");
+      })
+      .catch(err => console.log(err));
   }
 
   private isBusinessDay(date: Date) {
