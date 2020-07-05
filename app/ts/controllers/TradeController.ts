@@ -2,6 +2,7 @@ import TradeView from "../views/TradeView";
 import AlertView from "../views/AlertView";
 import Trades from "../models/Trades";
 import Trade from "../models/Trade";
+import { TradeService, HandlerFunction } from "../services/TradeService"
 import { domInject } from "../helpers/decorators/domInject";
 import { throttle } from "../helpers/decorators/throttle";
 import { PartialTrade } from "../models/PartialTrade";
@@ -21,6 +22,8 @@ export default class TradeController {
 
   //private _trades: Trades = new Trades();
   private _trades = new Trades();
+
+  private _service = new TradeService();
 
   constructor() {
     this._tradesView.update(this._trades);
@@ -48,7 +51,7 @@ export default class TradeController {
 
   @throttle(1000)
   importData() {
-    function isOk(response: Response) {
+    const isOk: HandlerFunction = (response: Response) => {
       if (response.ok) {
         return response
       } else {
@@ -56,18 +59,12 @@ export default class TradeController {
       }
     }
 
-    fetch('http://localhost:8080/dados')
-      .then(response => isOk(response))
-      .then(response => response.json())
-      .then((dados: PartialTrade[]) => {
-        dados
-          .map(dado => new Trade(new Date(), dado.vezes, dado.montante))
-          .forEach(trade => this._trades.add(trade))
-
+    this._service.getTrades(isOk)
+      .then(trades => {
+        trades.forEach(trade => this._trades.add(trade));
         this._tradesView.update(this._trades);
         this._alertView.update("Import completed with success!");
-      })
-      .catch(err => console.log(err));
+      });
   }
 
   private isBusinessDay(date: Date) {
