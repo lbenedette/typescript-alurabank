@@ -3,7 +3,8 @@ import AlertView from "../views/AlertView";
 import Trades from "../models/Trades";
 import Trade from "../models/Trade";
 import { domInject } from "../helpers/decorators/domInject";
-import PartialTrade from "../models/PartialTrade";
+import { throttle } from "../helpers/decorators/throttle";
+import { PartialTrade } from "../models/PartialTrade";
 
 export default class TradeController {
 
@@ -45,8 +46,8 @@ export default class TradeController {
     this._alertView.update("Trade added with success!");
   }
 
+  @throttle(1000)
   importData() {
-
     function isOk(response: Response) {
       if (response.ok) {
         return response

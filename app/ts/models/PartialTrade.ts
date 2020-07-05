@@ -1,4 +1,4 @@
-export default interface PartialTrade {
+export interface PartialTrade {
   vezes: number;
-  montante: number
+  montante: number;
 }
